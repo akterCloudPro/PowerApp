@@ -59,4 +59,14 @@ ForAll(FilteredApprovers, Collect(ApproverManager, {
     Claims: Approver.Claims,
     Department: Approver.Department,
     JobTitle: Approver.JobTitle
-}))
+}));
+    
+// Save and Cancel Button (OnSelect)
+SubmitForm(Form3); 
+ResetForm(Form3); Navigate(Screen1); ScreenTransition.Fade;
+
+// On Success (Form)
+Notify("Your form has been submitted", NotificationType.Success);
+Navigate(Screen1, ScreenTransition.Fade);
+
+
