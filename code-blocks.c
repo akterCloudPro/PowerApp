@@ -90,5 +90,60 @@ If(ThisItem.IsSelected,RGBA(101, 96, 99, 0.15),RGBA(101,96,99,0))
 Set(SelectedListItem, ThisItem); EditForm(Form3); Navigate(Screen5, ScreenTransition.Cover)
 // In form3, set Itam = SelectedListItem
 
+
+// GalleryRepeatingTable
+
+// ---- Combine table data into one string variable and Save (Patch) in SharePoint ----
+
+Set(
+    AllItemsString,
+    Concat(
+        GalleryRepeatingTable.AllItems,
+        Concatenate(
+            SlNo.Text,
+            ";",
+            Name.Text,
+            ";",
+            PhoneNo.Text,
+            ";",
+            Email.Text,
+            ";",
+            City.Text,
+            "|"
+        )
+    )
+);
+
+Patch(
+    'Repeating Table',
+     Defaults('Repeating Table'),
+    {Title:Text(Today()),AllItems:AllItemsString }
+    )
+
+
+// ---- Add new row in Gallery ----
+
+Collect(CollItems,{CItemSerialNumber: Text(Last(CollItems).CItemSerialNumber + 1) ,CVisitorName:"",CVisitorPhone:"",CVisitorEmail:"",CVisitorCity:""})
+
+// ---- Remove Row from Gallery -----
+
+RemoveIf(CollItems,CItemSerialNumber = ThisItem.CItemSerialNumber)
+
+// ---- Pull data and generate collection object -----
+
+Clear(CollItems); 
+Set(AllItemsString,Left(AllItemsString, Len(AllItemsString)-1)); 
+ForAll(Split(AllItemsString,"|"), 
+Collect(CollItems,
+{CItemSerialNumber: Text(Last(FirstN(Split(Result,";").Result,1).Result).Result),
+CVisitorName:Text(Last(FirstN(Split(Result,";").Result,2).Result).Result),
+CVisitorPhone:Text(Last(FirstN(Split(Result,";").Result,3).Result).Result),
+CVisitorEmail:Text(Last(FirstN(Split(Result,";").Result,4).Result).Result),
+CVisitorCity:Text(Last(FirstN(Split(Result,";").Result,5).Result).Result)}))
+
+
+// Sum repeated row calculated sum value
+Sum(GalleryRepeatingTable.AllItems,PhoneNo)
+
     
 
