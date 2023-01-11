@@ -69,4 +69,26 @@ ResetForm(Form3); Navigate(Screen1); ScreenTransition.Fade;
 Notify("Your form has been submitted", NotificationType.Success);
 Navigate(Screen1, ScreenTransition.Fade);
 
+// Static Collection
+ClearCollect(
+    Header,
+    {
+        Reason: "Reason",
+        Requester: "Requester",
+        Days: "# of Days",
+        Manager: "Manager",
+        Status: "Status",
+        Action: "Action"
+        
+    }
+)
+
+    // TemplateFill on Selection in Gallery item
+If(ThisItem.IsSelected,RGBA(101, 96, 99, 0.15),RGBA(101,96,99,0))
+
+//Edit Item (OnSelected)
+Set(SelectedListItem, ThisItem); EditForm(Form3); Navigate(Screen5, ScreenTransition.Cover)
+// In form3, set Itam = SelectedListItem
+
+    
 
