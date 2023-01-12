@@ -144,6 +144,11 @@ CVisitorCity:Text(Last(FirstN(Split(Result,";").Result,5).Result).Result)}))
 
 // Sum repeated row calculated sum value
 Sum(GalleryRepeatingTable.AllItems,PhoneNo)
+    
+//Login Form (on Click Login button)
+If(!IsBlank(LookUp('User Credentials', UName = TextInput5.Text And Pwd=TextInput6.Text).Title), Navigate(Screen4), UpdateContext({ShowForgetMessage:true}))
+// Above ShowForgetMessage variable is for Showing error message in failed attempt (You have entered wrong user name or password)
+
 
     
 
