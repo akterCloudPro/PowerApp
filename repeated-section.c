@@ -3,23 +3,63 @@
 //**********************// 
 
 // Add new row in Gallery
-Set(varNextID, Value(Last(ChargingCollection).CslNo) + 1);
+Set(varNextID, Value(Last(SpecificationRepeatedRow).CitemNo) + 1);
 Collect(
-    ChargingCollection,
+    SpecificationRepeatedRow,
     {
-        CslNo: Text(varNextID),
-        CProjectCode: "",
-        CBudgetHolder: "",
-        CCostCode: "",
+        CitemNo: Text(Last(SpecificationRepeatedRow).CitemNo + 1),
+        CDescription: "",
+        CSize: "",
+        CQuantity: "",
+        CUnitPricet: "",
         CAmount: ""
     }
-)
+);
 
 // Remove row from Gallery -----
-RemoveIf(ChargingCollection,CslNo = ThisItem.CslNo)
+RemoveIf(SpecificationRepeatedRow,CitemNo = ThisItem.CitemNo)
 
 // Sum repeated amount in the CostGallery 
-Sum(ChargingGallery.AllItems,Amount)
+Sum(SpecificationRepeatedRow.AllItems,CAmount)
+ 
+Set(
+    AllSpecificationsItemsString,
+    Concat(
+        galSpecifications.AllItems,
+        Concatenate(
+            inpItemNo.Text,
+            ";",
+            inpDescription.Text,
+            ";",
+            inpSize.Text,
+            ";",
+            inpQuantity.Text,
+            ";",
+            inpUnitPrice.Text,
+            ";",
+            inpTotalAmount.Text,
+            "|"
+        )
+    )
+);
+
+ClearCollect( CollRepSecList, Patch(Procurement, Defaults(Procurement), {Title:DataCardValue1.Text, 'Requisition ID':DataCardValue11.Text, Specification:AllSpecificationsItemsString}) );
+
+Set(varRepSecListID, First(CollRepSecList).'Requisition ID');
+
+ForAll
+(
+    galSpecifications.AllItems,
+    Patch
+    (
+        Procurement_Specifications, {Title:"", 'Request ID':varRepSecListID, Description:inpDescription.Text, 'Total Amount':inpAmount}
+    )
+);
+
+Reset(galSpecifications);
+ResetForm(formRequisition);
+Navigate(scrMyRecords);
+
 
 // "Concatinate" joining the cells of individual rows first; then Concat added entires rows (output) in a single string named "ChargingCollectionRows"
 UpdateContext({
